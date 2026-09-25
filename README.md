@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/basebin/molplatform/main/.github/assets/thumbnail.png" alt="molplatform" width="100%">
+  <img src="https://raw.githubusercontent.com/Coccinella-Labs/molplatform/main/.github/assets/thumbnail.png" alt="molplatform" width="100%">
 </p>
 
 # mol-platform
