@@ -9,7 +9,7 @@ Please refer to our [Installation Guide](docs/installation.md) for setup instruc
 ## How to Contribute
 
 1. Fork the repository
-2. Clone your fork: `git clone https://github.com/bniladridas/mol-platform.git`
+2. Clone your fork: `git clone https://github.com/coccinella-labs/mol-platform.git`
 3. Create a feature branch: `git checkout -b feature/your-feature`
 4. Make your changes
 5. Write tests for new functionality
