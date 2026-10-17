@@ -40,6 +40,11 @@ jobs:
         cd backend
         API_KEY=${{ secrets.API_KEY }} python -m pytest tests/test_molecule_generation.py -v
 
+    - name: Run CLI validation tests
+      run: |
+        cd backend
+        API_KEY=${{ secrets.API_KEY }} python -m pytest tests/test_cli_validation.py -v
+
     - name: Run backend e2e tests
       run: |
         cd backend

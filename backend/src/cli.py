@@ -12,6 +12,16 @@ from typing import Optional
 
 import requests
 
+# Maximum mutations the API accepts per request. This is the same value as
+# MAX_MUTATIONS_PER_REQUEST in src/main.py, restated rather than imported
+# because this file is frozen by PyInstaller as a standalone entry script with
+# no package context, so `from src.main import ...` fails at runtime in the
+# released binary. tests/test_cli_validation.py asserts the two agree so the
+# duplication cannot drift unnoticed. Do not raise one without the other: the
+# server rejects anything higher with a 400, and the frontend input is
+# constrained to the same maximum.
+MAX_MUTATIONS_PER_REQUEST = 10
+
 
 class CLISession:
     """CLI session state manager."""
@@ -163,6 +173,13 @@ Examples:
                         n = int(parts[2])
                         if n < 0:
                             print("❌ Error: Mutations must be non-negative")
+                        elif n > MAX_MUTATIONS_PER_REQUEST:
+                            # Refused here rather than at generate time, where
+                            # the server answers with a bare HTTP 400.
+                            print(
+                                f"❌ Error: Mutations must not exceed "
+                                f"{MAX_MUTATIONS_PER_REQUEST}"
+                            )
                         else:
                             session.mutations = n
                             print(f"✓ Mutations set to {n}")
@@ -252,6 +269,18 @@ Interactive mode:
 
     if not args.health and not args.generate:
         parser.print_help()
+        return 1
+
+    # Only relevant when a molecule is actually generated. --health alone does
+    # not use it, and rejecting an unused value would break a call that works
+    # today, such as `--health --mutations 50`.
+    if args.generate and not 0 <= args.mutations <= MAX_MUTATIONS_PER_REQUEST:
+        # argparse has already rejected non-integers via type=int. This catches
+        # the range before any request is made, matching the interactive path.
+        print(
+            f"❌ Error: --mutations must be between 0 and "
+            f"{MAX_MUTATIONS_PER_REQUEST}, got {args.mutations}"
+        )
         return 1
 
     print(f"Connecting to {args.url}")
